@@ -1,0 +1,46 @@
+* {
+  margin: 0%;
+  padding: 0%;
+  box-sizing: border-box;
+}
+
+.skills_container {
+  width: 95%;
+  margin: auto;
+  height: 80vh;
+  /* padding: 5%; */
+  /* border: 2px solid blue; */
+}
+
+.technicalskills_div {
+  width: inherit;
+  display: flex;
+  margin: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.skill_div {
+  padding: 4%;
+  margin: 1%;
+  /* border: 2px solid red; */
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+  background-color: teal;
+}
+
+.skill_Name {
+  color: white;
+  transition: 0.5s;
+}
+
+.skill_Name:hover {
+  color: black;
+}
+
+@media screen and (max-width: 1200px) {
+  .skills_container {
+    height: 85vh;
+    overflow: scroll;
+  }
+}
