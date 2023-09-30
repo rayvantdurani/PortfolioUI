@@ -11,6 +11,8 @@ In the project directory, you can run:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+Or you can visit https://rayvantportfolio.netlify.app/ 
+
 ![image](https://github.com/rayvantdurani/PortfolioUI/assets/49509146/b049ac36-f839-4d43-98ca-09243e6011d9)
 
 
