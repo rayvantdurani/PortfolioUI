@@ -6,7 +6,7 @@ function Header() {
     <React.Fragment>
       <div className="header_container">
         <div className="name_div">
-          <h1 className="name_heading">R.Durani</h1>
+          <h1 className="name_heading">Portfolio</h1>
         </div>
 
         <div className="header_menu_container">
