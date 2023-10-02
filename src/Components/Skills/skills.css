@@ -15,6 +15,7 @@
 .technicalskills_div {
   width: inherit;
   display: flex;
+  /* max-width: 50%; */
   margin: auto;
   flex-wrap: wrap;
   justify-content: center;
@@ -38,7 +39,7 @@
   color: black;
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (width<1200px) {
   .skills_container {
     height: 85vh;
     overflow: scroll;

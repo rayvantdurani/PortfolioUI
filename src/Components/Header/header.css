@@ -55,8 +55,13 @@
 .menu_options:hover {
   margin-right: 4%;
   text-decoration: none;
-  color: black;
+  color: teal;
   font-size: 125%;
+}
+
+.menu_options:hover::after {
+  height: 2px;
+  width: 50%;
 }
 
 @media screen and (max-width: 700px) {
@@ -73,7 +78,7 @@
   }
 
   .name_heading {
-    color: teal;
+    color: #323031;
     font-size: 200%;
     font-family: "Slabo 27px", serif;
   }
@@ -81,7 +86,7 @@
   .menu_options {
     margin-right: 4%;
     text-decoration: none;
-    color: teal;
+    color: #323031;
     font-size: 90%;
     font-weight: 600;
     transition: 0.5s;
