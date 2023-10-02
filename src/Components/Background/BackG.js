@@ -38,8 +38,8 @@ function BackG() {
         interactivity: {
           events: {
             onClick: {
-              enable: false,
-              mode: "push",
+              enable: true,
+              mode: "connect",
             },
             onHover: {
               enable: true,
