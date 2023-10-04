@@ -49,6 +49,19 @@
   font-weight: 700;
   color: rgb(65, 65, 65);
   padding-bottom: 5%;
+  animation: loading 0.8s forwards;
+}
+
+@keyframes loading {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .contactme_body {
@@ -70,6 +83,20 @@
   display: flex;
 }
 
+.icon_div_social {
+  padding: 16px 32px;
+  border: 2px solid teal;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.icon_div_social:hover {
+  padding: 16px 32px;
+  border: none;
+  background-color: teal;
+  cursor: pointer;
+  border-radius: 10px;
+}
 .github {
   font-size: 200%;
 }
@@ -79,15 +106,15 @@
 }
 
 .link:hover {
-  color: teal;
-  font-size: 110%;
+  color: white;
+  font-size: 100%;
 }
 
 .link {
   text-decoration: none;
   font-size: 100%;
-  transition: 0.7s;
-  color: black;
+  transition: 0.5s;
+  color: rgb(49, 49, 49);
 }
 
 .resume_button {
@@ -114,6 +141,7 @@
 
 @media screen and (width <900px) {
   .contactme_container {
+    min-width: 300px;
     padding-top: 5%;
   }
 

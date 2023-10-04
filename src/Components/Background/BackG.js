@@ -64,7 +64,7 @@ function BackG() {
           },
           links: {
             color: "#084C61",
-            distance: 150,
+            distance: 130,
             enable: true,
             opacity: 0.8,
             width: 1,
@@ -76,7 +76,7 @@ function BackG() {
               default: "bounce",
             },
             random: false,
-            speed: 4,
+            speed: 2,
             straight: false,
           },
           number: {
@@ -84,7 +84,7 @@ function BackG() {
               enable: true,
               area: 800,
             },
-            value: 90,
+            value: 70,
           },
           opacity: {
             value: 1,

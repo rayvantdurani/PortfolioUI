@@ -28,7 +28,7 @@ function ContactMe() {
 
         <div className="contactme_body">
           <div className="section2">
-            <div className="icon_div">
+            <div className="icon_div_social">
               <h2 className="github">
                 <a href="https://github.com/rayvantdurani" className="link">
                   Github
@@ -36,7 +36,7 @@ function ContactMe() {
               </h2>
             </div>
 
-            <div className="icon_div">
+            <div className="icon_div_social">
               <h2 className="LinkedIn">
                 <a
                   href="https://www.linkedin.com/in/rayvant-durani-ba3b61155"
