@@ -57,6 +57,7 @@
 
 @media screen and (width<=900px) {
   .body_container {
+    min-width: 300px;
     width: 95%;
     margin: auto;
     padding-top: 7%;

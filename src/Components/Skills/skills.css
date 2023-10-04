@@ -7,7 +7,7 @@
 .skills_container {
   width: 95%;
   margin: auto;
-  height: 80vh;
+  /* height: 80vh; */
   /* padding: 5%; */
   /* border: 2px solid blue; */
 }
@@ -35,6 +35,11 @@
   transition: 0.5s;
 }
 
+.skill_img {
+  display: none;
+  /* mix-blend-mode: multiply; */
+}
+
 .skill_Name:hover {
   color: black;
 }
@@ -43,5 +48,54 @@
   .skills_container {
     height: 85vh;
     overflow: scroll;
+  }
+}
+
+@media screen and (width<=800px) {
+  .skills_container {
+    width: 90%;
+    margin: auto;
+    min-width: 300px;
+    height: 80vh;
+    margin-bottom: 2%;
+
+    /* scroll-behavior: smooth; */
+  }
+  .technicalskills_div {
+    display: grid;
+  }
+
+  .skill_div:nth-child(odd) {
+    width: 100%;
+    display: flex;
+    /* flex-direction: row-reverse; */
+    align-items: center;
+    background-color: white;
+    justify-content: center;
+    box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5);
+    border-bottom: 2px solid teal;
+
+    /* border: 2px solid red; */
+  }
+  .skill_div:nth-child(even) {
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    box-shadow: none;
+    border-bottom: 2px solid teal;
+    box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5);
+    /* border: 2px solid red; */
+  }
+
+  .skill_Name {
+    display: none;
+  }
+
+  .skill_img {
+    display: block;
+    width: 25%;
   }
 }
