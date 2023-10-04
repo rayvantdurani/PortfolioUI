@@ -21,6 +21,7 @@
   /* border: 2px solid red; */
   justify-content: center;
   align-items: center;
+  margin-right: 2%;
 }
 
 .about_me_left_intro_div {
@@ -64,7 +65,7 @@
   color: rgb(62, 62, 62);
   font-size: 150%;
   font-weight: 350;
-  text-align: center;
+  text-align: justify;
 }
 
 @media screen and (width <700px) {
@@ -110,7 +111,7 @@
     color: rgb(62, 62, 62);
     font-size: 100%;
     font-weight: 400;
-    text-align: center;
+    text-align: justify;
   }
   .aboutme_right_container {
     padding-bottom: 10%;
