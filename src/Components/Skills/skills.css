@@ -68,6 +68,7 @@
   .skill_div:nth-child(odd) {
     width: 100%;
     display: flex;
+    min-height: 20vh;
     /* flex-direction: row-reverse; */
     align-items: center;
     background-color: white;
@@ -80,6 +81,7 @@
   .skill_div:nth-child(even) {
     width: 100%;
     display: flex;
+    min-height: 20vh;
     flex-direction: row-reverse;
     align-items: center;
     justify-content: center;
