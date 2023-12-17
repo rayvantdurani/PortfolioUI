@@ -7,6 +7,7 @@ import Springimg from "../Images/spring.png";
 import Reactimg from "../Images/react.png";
 import Javaimg from "../Images/Java.png";
 import Mysqlimg from "../Images/mysql.png";
+import GitImg from "../Images/git.png";
 import Mongodbimg from "../Images/mongodb.png";
 
 function Skills() {
@@ -50,7 +51,7 @@ function Skills() {
 
           <div className="skill_div">
             <h3 className="skill_Name">Git</h3>
-            <img src={CSSimg} className="skill_img" alt="" />
+            <img src={GitImg} className="skill_img" alt="" />
             <p className="skill_details">4+ Years Of Experience</p>
           </div>
           <div className="skill_div">
