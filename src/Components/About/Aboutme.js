@@ -8,7 +8,7 @@ function Aboutme() {
         <div className="aboutme_left_container">
           <div className="about_me_left_intro_div">
             <p className="aboutme_left_line1"> Currently Working as a</p>
-            <p className="aboutme_left_line2"> Software Developer</p>
+            <p className="aboutme_left_line2"> Senior Software Developer</p>
             <p className="aboutme_left_line3">in HSBC</p>
           </div>
         </div>
