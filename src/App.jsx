@@ -280,16 +280,33 @@ function App() {
 
   // Theme toggle function
   const toggleTheme = () => {
-    // Instead of creating an overlay, we'll add a transition class to the body
-    document.documentElement.classList.add("theme-transitioning");
+    // Get all major sections
+    const sections = [
+      document.querySelector(".header"),
+      document.querySelector(".hero-section"),
+      document.querySelector(".about-section"),
+      document.querySelector(".skills-section"),
+      document.querySelector(".experience-section"),
+      document.querySelector(".contact-section"),
+      document.querySelector(".footer"),
+    ];
 
-    // Change the theme
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark-mode");
+    // Add transition class to each section
+    sections.forEach((section) => {
+      if (section) section.classList.add("section-transitioning");
+    });
 
-    // Remove the transition class after animation completes
+    // Change theme with a slight delay
     setTimeout(() => {
-      document.documentElement.classList.remove("theme-transitioning");
+      setIsDarkMode(!isDarkMode);
+      document.documentElement.classList.toggle("dark-mode");
+    }, 50);
+
+    // Remove transition classes after animation completes
+    setTimeout(() => {
+      sections.forEach((section) => {
+        if (section) section.classList.remove("section-transitioning");
+      });
     }, 800);
   };
 
@@ -1638,21 +1655,36 @@ function App() {
           }
         }
         
-        /* Smooth theme transition */
-        html, body, .App, .header, .hero-section, .about-section, .skills-section,
-        .experience-section, .contact-section, .footer, .mobile-menu,
-        .skill-category-card, .contact-item, .contact-intro-card, .about-card,
-        .theme-toggle-btn, .stat-item, .copy-button, .logo, .nav-link,
-        .experience-item, .skill-progress-bar, .mobile-nav-list li {
-          transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease;
+        /* Section-by-section transition */
+        .header,
+        .hero-section,
+        .about-section,
+        .skills-section,
+        .experience-section,
+        .contact-section,
+        .footer {
+          transition: background-color 0.5s ease, color 0.5s ease;
         }
         
-        /* When transitioning, make sure all elements transition smoothly */
-        .theme-transitioning * {
-          transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease !important;
+        .section-transitioning {
+          transition: background-color 0.5s ease, color 0.5s ease;
         }
         
-        /* Remove the previous wave transition overlay */
+        /* Transition for specific elements */
+        .skill-category-card,
+        .contact-item,
+        .contact-intro-card,
+        .about-card,
+        .stat-item,
+        .experience-item,
+        .theme-toggle-btn,
+        .logo,
+        .mobile-menu,
+        .copy-button {
+          transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+        
+        /* Remove previous transition overlay */
         .theme-transition-overlay {
           display: none;
         }
