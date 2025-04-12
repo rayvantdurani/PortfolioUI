@@ -44,6 +44,8 @@ function App() {
   const [typedText, setTypedText] = useState("");
   const aboutRef = useRef(null);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
 
   // Calculate years of experience automatically from August 2021
   const calculateExperience = () => {
@@ -100,6 +102,22 @@ function App() {
       return () => clearInterval(typingInterval);
     }
   }, [isAboutVisible, aboutText]);
+
+  // Check if we're in mobile view
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth <= 992);
+    };
+
+    // Initial check
+    checkMobileView();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobileView);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkMobileView);
+  }, []);
 
   // Skills data - organized by categories with proficiency levels
   const skillsCategories = [
@@ -241,14 +259,39 @@ function App() {
       });
   };
 
+  // Function to toggle mobile menu
+  const toggleMobileMenu = () => {
+    if (isMobileView) {
+      setMobileMenuOpen(!mobileMenuOpen);
+    }
+  };
+
+  // Function to close mobile menu and scroll to section
+  const handleNavClick = (sectionId) => {
+    setMobileMenuOpen(false);
+
+    // Smooth scroll to the section
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="App">
       {/* Header with navigation */}
       <header className="header">
         <div className="container header-container">
-          <div className="logo">RD</div>
+          <div className="logo-container">
+            <div
+              className={`logo ${isMobileView ? "mobile-active" : ""}`}
+              onClick={toggleMobileMenu}
+            >
+              RD
+            </div>
+          </div>
           <nav className="nav">
-            <ul className="nav-list">
+            <ul className="nav-list desktop-nav">
               <li>
                 <a href="#hero" className="nav-link">
                   Home
@@ -278,6 +321,28 @@ function App() {
           </nav>
         </div>
       </header>
+
+      {/* Mobile Menu */}
+      <div
+        className={`mobile-menu-overlay ${mobileMenuOpen ? "active" : ""}`}
+        onClick={toggleMobileMenu}
+      >
+        <div
+          className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className="close-menu-button" onClick={toggleMobileMenu}>
+            <X size={24} />
+          </button>
+          <ul className="mobile-nav-list">
+            <li onClick={() => handleNavClick("hero")}>Home</li>
+            <li onClick={() => handleNavClick("about")}>About</li>
+            <li onClick={() => handleNavClick("skills")}>Skills</li>
+            <li onClick={() => handleNavClick("experience")}>Experience</li>
+            <li onClick={() => handleNavClick("contact")}>Contact</li>
+          </ul>
+        </div>
+      </div>
 
       {/* Hero Section */}
       <section id="hero" className="hero-section">
@@ -326,7 +391,7 @@ function App() {
                   <p>Companies</p>
                 </div>
                 <div className="stat-item">
-                  <h3>20+</h3>
+                  <h3>30+</h3>
                   <p>Projects</p>
                 </div>
               </div>
@@ -395,9 +460,9 @@ function App() {
               <div className="contact-intro-card">
                 <h3>How to Contact Me</h3>
                 <p>
-                  Feel free to reach out through any of the channels below. I'm
-                  always open to discussing new projects, opportunities, or just
-                  having a conversation about technology.
+                  Feel free to reach out through any of the channels. I'm always
+                  open to discussing new projects, opportunities, or just having
+                  a conversation about technology.
                 </p>
                 <p>
                   I typically respond within 24-48 hours and am available for
@@ -576,8 +641,13 @@ function App() {
         
         .header-container {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
+          position: relative;
+        }
+        
+        .logo-container {
+          z-index: 1002;
         }
         
         .logo {
@@ -592,6 +662,22 @@ function App() {
           justify-content: center;
           border-radius: 50%;
           box-shadow: var(--shadow);
+          transition: transform 0.3s ease;
+        }
+        
+        .logo.mobile-active {
+          cursor: pointer;
+        }
+        
+        .logo:hover {
+          transform: scale(1.05);
+        }
+        
+        .nav {
+          position: absolute;
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
         }
         
         .nav-list {
@@ -1252,6 +1338,153 @@ function App() {
           html {
             -webkit-text-size-adjust: 100%;
           }
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 2000;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding-top: 80px;
+        }
+        
+        .mobile-menu-overlay.active {
+          opacity: 1;
+          visibility: visible;
+        }
+        
+        .mobile-menu {
+          width: 90%;
+          max-width: 350px;
+          background-color: var(--bg-white);
+          border-radius: var(--border-radius);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+          padding: 25px;
+          z-index: 2001;
+          transform: translateY(-50px) scale(0.8);
+          opacity: 0;
+          transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
+          overflow: hidden;
+          position: relative;
+        }
+        
+        .mobile-menu::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-white) 100%);
+          z-index: -1;
+        }
+        
+        .mobile-menu.open {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+        
+        .close-menu-button {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          background: none;
+          border: none;
+          color: var(--text-primary);
+          cursor: pointer;
+          padding: 5px;
+        }
+        
+        .mobile-nav-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          margin-top: 20px;
+        }
+        
+        .mobile-nav-list li {
+          padding: 15px 10px;
+          border-bottom: 1px solid var(--bg-light);
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: all 0.3s ease;
+          transform: translateX(-20px);
+          opacity: 0;
+          animation: slideIn 0.5s forwards;
+          animation-delay: calc(0.1s * var(--i, 0));
+        }
+        
+        .mobile-nav-list li:last-child {
+          border-bottom: none;
+        }
+        
+        .mobile-nav-list li:hover {
+          color: var(--primary-color);
+          background-color: var(--bg-light);
+          border-radius: 8px;
+          padding-left: 15px;
+        }
+        
+        @keyframes slideIn {
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        /* Media Queries */
+        @media (max-width: 992px) {
+          .desktop-nav {
+            display: none;
+          }
+          
+          .logo.mobile-active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: pulse 2s infinite;
+          }
+          
+          @keyframes pulse {
+            0% {
+              transform: scale(1);
+              border-color: rgba(37, 99, 235, 0);
+            }
+            50% {
+              transform: scale(1.1);
+              border-color: rgba(37, 99, 235, 0.5);
+            }
+            100% {
+              transform: scale(1);
+              border-color: rgba(37, 99, 235, 0);
+            }
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .logo::after {
+            display: block;
+          }
+          
+          .mobile-nav-list li:nth-child(1) { --i: 1; }
+          .mobile-nav-list li:nth-child(2) { --i: 2; }
+          .mobile-nav-list li:nth-child(3) { --i: 3; }
+          .mobile-nav-list li:nth-child(4) { --i: 4; }
+          .mobile-nav-list li:nth-child(5) { --i: 5; }
         }
       `}</style>
     </div>
