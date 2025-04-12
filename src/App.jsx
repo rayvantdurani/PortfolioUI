@@ -46,6 +46,7 @@ function App() {
   const [copySuccess, setCopySuccess] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Calculate years of experience automatically from August 2021
   const calculateExperience = () => {
@@ -277,8 +278,62 @@ function App() {
     }
   };
 
+  // Theme toggle function
+  const toggleTheme = () => {
+    // Get all major sections
+    const sections = [
+      document.querySelector(".header"),
+      document.querySelector(".hero-section"),
+      document.querySelector(".about-section"),
+      document.querySelector(".skills-section"),
+      document.querySelector(".experience-section"),
+      document.querySelector(".contact-section"),
+      document.querySelector(".footer"),
+    ];
+
+    // Add transition class to each section
+    sections.forEach((section) => {
+      if (section) section.classList.add("section-transitioning");
+    });
+
+    // Change theme with a slight delay
+    setTimeout(() => {
+      setIsDarkMode(!isDarkMode);
+      document.documentElement.classList.toggle("dark-mode");
+    }, 50);
+
+    // Remove transition classes after animation completes
+    setTimeout(() => {
+      sections.forEach((section) => {
+        if (section) section.classList.remove("section-transitioning");
+      });
+    }, 800);
+  };
+
+  // Initialize theme from localStorage on component mount
+  useEffect(() => {
+    // Check if user has a saved preference
+    const savedTheme = localStorage.getItem("theme");
+
+    // Check if user prefers dark mode at OS level
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    // Set initial theme based on saved preference or OS preference
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add("dark-mode");
+    }
+  }, []);
+
+  // Save theme preference to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
   return (
-    <div className="App">
+    <div className={`App ${isDarkMode ? "dark-theme" : "light-theme"}`}>
       {/* Header with navigation */}
       <header className="header">
         <div className="container header-container">
@@ -525,6 +580,15 @@ function App() {
         </div>
       </section>
 
+      {/* Theme Toggle Button */}
+      <button
+        className="theme-toggle-btn"
+        onClick={toggleTheme}
+        aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+      >
+        {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+      </button>
+
       {/* Footer */}
       <footer className="footer">
         <div className="container">
@@ -551,6 +615,21 @@ function App() {
           --border-radius: 12px;
           --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
           --transition: all 0.3s ease;
+        }
+        
+        /* Dark Mode Variables */
+        .dark-mode {
+          --primary-color: #3b82f6;
+          --primary-light: #60a5fa;
+          --primary-dark: #2563eb;
+          --bg-white: #1e1e2e;
+          --bg-light: #1a1a2e;
+          --bg-gray: #2d2d3f;
+          --bg-dark: #0f0f1a;
+          --text-primary: #f1f5f9;
+          --text-secondary: #cbd5e1;
+          --text-light: #f8fafc;
+          --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
         
         /* Reset & Base Styles */
@@ -1485,6 +1564,129 @@ function App() {
           .mobile-nav-list li:nth-child(3) { --i: 3; }
           .mobile-nav-list li:nth-child(4) { --i: 4; }
           .mobile-nav-list li:nth-child(5) { --i: 5; }
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+          position: fixed;
+          bottom: 30px;
+          left: 30px;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background-color: var(--bg-white);
+          color: var(--primary-color);
+          border: none;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 999;
+          transition: all 0.3s ease;
+        }
+        
+        .theme-toggle-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-toggle-btn:active {
+          transform: scale(0.95);
+        }
+        
+        /* Dark Mode Specific Styles */
+        .dark-theme .profile-placeholder {
+          border-color: var(--primary-dark);
+        }
+        
+        .dark-theme .skill-category-card,
+        .dark-theme .contact-item,
+        .dark-theme .contact-intro-card,
+        .dark-theme .about-card {
+          background-color: var(--bg-dark);
+        }
+        
+        .dark-theme .stat-item {
+          background-color: var(--bg-gray);
+        }
+        
+        .dark-theme .copy-button {
+          background-color: var(--bg-gray);
+          color: var(--text-light);
+        }
+        
+        .dark-theme .mobile-menu {
+          background-color: var(--bg-dark);
+        }
+        
+        .dark-theme .mobile-menu::before {
+          background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-gray) 100%);
+        }
+        
+        .dark-theme .mobile-nav-list li:hover {
+          background-color: var(--bg-gray);
+        }
+        
+        .dark-theme .header {
+          background-color: var(--bg-dark);
+        }
+        
+        .dark-theme .logo {
+          background-color: var(--bg-gray);
+        }
+        
+        /* Media Queries for Theme Toggle Button */
+        @media (max-width: 768px) {
+          .theme-toggle-btn {
+            bottom: 20px;
+            left: 20px;
+            width: 45px;
+            height: 45px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .theme-toggle-btn {
+            bottom: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+          }
+        }
+        
+        /* Section-by-section transition */
+        .header,
+        .hero-section,
+        .about-section,
+        .skills-section,
+        .experience-section,
+        .contact-section,
+        .footer {
+          transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        .section-transitioning {
+          transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        /* Transition for specific elements */
+        .skill-category-card,
+        .contact-item,
+        .contact-intro-card,
+        .about-card,
+        .stat-item,
+        .experience-item,
+        .theme-toggle-btn,
+        .logo,
+        .mobile-menu,
+        .copy-button {
+          transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+        
+        /* Remove previous transition overlay */
+        .theme-transition-overlay {
+          display: none;
         }
       `}</style>
     </div>
