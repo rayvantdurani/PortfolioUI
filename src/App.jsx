@@ -280,8 +280,17 @@ function App() {
 
   // Theme toggle function
   const toggleTheme = () => {
+    // Instead of creating an overlay, we'll add a transition class to the body
+    document.documentElement.classList.add("theme-transitioning");
+
+    // Change the theme
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark-mode");
+
+    // Remove the transition class after animation completes
+    setTimeout(() => {
+      document.documentElement.classList.remove("theme-transitioning");
+    }, 800);
   };
 
   // Initialize theme from localStorage on component mount
@@ -1627,6 +1636,25 @@ function App() {
             width: 40px;
             height: 40px;
           }
+        }
+        
+        /* Smooth theme transition */
+        html, body, .App, .header, .hero-section, .about-section, .skills-section,
+        .experience-section, .contact-section, .footer, .mobile-menu,
+        .skill-category-card, .contact-item, .contact-intro-card, .about-card,
+        .theme-toggle-btn, .stat-item, .copy-button, .logo, .nav-link,
+        .experience-item, .skill-progress-bar, .mobile-nav-list li {
+          transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease;
+        }
+        
+        /* When transitioning, make sure all elements transition smoothly */
+        .theme-transitioning * {
+          transition: background-color 0.8s ease, color 0.8s ease, border-color 0.8s ease, box-shadow 0.8s ease !important;
+        }
+        
+        /* Remove the previous wave transition overlay */
+        .theme-transition-overlay {
+          display: none;
         }
       `}</style>
     </div>
