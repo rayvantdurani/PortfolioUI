@@ -33,6 +33,8 @@ import {
   Play,
   Moon,
   Sun,
+  Copy,
+  Check,
 } from "lucide-react";
 import "./App.css";
 
@@ -41,6 +43,9 @@ function App() {
   const [isAboutVisible, setIsAboutVisible] = useState(false);
   const [typedText, setTypedText] = useState("");
   const aboutRef = useRef(null);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
 
   // Calculate years of experience automatically from August 2021
   const calculateExperience = () => {
@@ -48,7 +53,7 @@ function App() {
     const currentDate = new Date();
     const diffInYears =
       (currentDate - startDate) / (1000 * 60 * 60 * 24 * 365.25);
-    return Math.floor(diffInYears);
+    return Math.round(diffInYears);
   };
 
   const yearsOfExperience = calculateExperience();
@@ -98,6 +103,22 @@ function App() {
     }
   }, [isAboutVisible, aboutText]);
 
+  // Check if we're in mobile view
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth <= 992);
+    };
+
+    // Initial check
+    checkMobileView();
+
+    // Add event listener for window resize
+    window.addEventListener("resize", checkMobileView);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkMobileView);
+  }, []);
+
   // Skills data - organized by categories with proficiency levels
   const skillsCategories = [
     {
@@ -105,9 +126,8 @@ function App() {
       skills: [
         { name: "Java 8", level: 90 },
         { name: "Java 11", level: 85 },
-        { name: "JavaScript", level: 75 },
-        { name: "TypeScript", level: 70 },
-        { name: "Python", level: 65 },
+        { name: "JavaScript", level: 60 },
+        { name: "Python", level: 60 },
       ],
     },
     {
@@ -115,8 +135,7 @@ function App() {
       skills: [
         { name: "HTML", level: 80 },
         { name: "CSS", level: 75 },
-        { name: "React", level: 70 },
-        { name: "Angular", level: 65 },
+        { name: "React", level: 65 },
         { name: "REST APIs", level: 90 },
       ],
     },
@@ -135,8 +154,6 @@ function App() {
       skills: [
         { name: "JUnit 5", level: 80 },
         { name: "Mockito", level: 75 },
-        { name: "TestNG", level: 70 },
-        { name: "Selenium", level: 65 },
       ],
     },
     {
@@ -203,47 +220,18 @@ function App() {
     },
   ];
 
-  // Projects data
-  const projectsData = [
-    {
-      title: "Enterprise Microservice Architecture",
-      description:
-        "Designed and implemented a scalable microservice architecture using Spring Boot and Docker, with Kubernetes for orchestration.",
-      image:
-        "https://placehold.co/600x400/333/white?text=Microservice+Architecture",
-      demoLink: "#",
-      sourceLink: "#",
-      technologies: ["Java 11", "Spring Boot", "Docker", "Kubernetes"],
-      views: "2.4M views",
-      timestamp: "1 month ago",
-      duration: "18:24",
-    },
-    {
-      title: "Secure API Gateway",
-      description:
-        "Developed a secure API gateway with OAuth2 and JWT implementation, handling authentication and authorization for microservices.",
-      image: "https://placehold.co/600x400/333/white?text=API+Gateway",
-      demoLink: "#",
-      sourceLink: "#",
-      technologies: ["Spring Security", "OAuth2", "JWT", "Java"],
-      views: "1.8M views",
-      timestamp: "2 months ago",
-      duration: "12:56",
-    },
-  ];
-
   // Work experience data
   const workExperience = [
     {
       company: "THG",
-      position: "Senior Java Developer",
+      position: "Software Engineer",
       period: "Aug 2024 - Present",
       description:
         "Working on ecommerce platform development using Java, Spring Boot, and microservices architecture. Responsible for designing and implementing scalable backend services for high-traffic ecommerce applications.",
     },
     {
       company: "HSBC",
-      position: "Java Developer",
+      position: "Senior Software Engineer",
       period: "Aug 2021 - Aug 2024",
       description:
         "Developed and maintained financial applications using Java, Spring Boot, and RESTful APIs. Worked on high-performance, secure banking solutions. Implemented microservices architecture and contributed to the digital transformation initiatives.",
@@ -258,14 +246,52 @@ function App() {
     location: "Pune, India",
   };
 
+  // Function to copy email to clipboard
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
+
+  // Function to toggle mobile menu
+  const toggleMobileMenu = () => {
+    if (isMobileView) {
+      setMobileMenuOpen(!mobileMenuOpen);
+    }
+  };
+
+  // Function to close mobile menu and scroll to section
+  const handleNavClick = (sectionId) => {
+    setMobileMenuOpen(false);
+
+    // Smooth scroll to the section
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="App">
       {/* Header with navigation */}
       <header className="header">
         <div className="container header-container">
-          <div className="logo">RD</div>
+          <div className="logo-container">
+            <div
+              className={`logo ${isMobileView ? "mobile-active" : ""}`}
+              onClick={toggleMobileMenu}
+            >
+              RD
+            </div>
+          </div>
           <nav className="nav">
-            <ul className="nav-list">
+            <ul className="nav-list desktop-nav">
               <li>
                 <a href="#hero" className="nav-link">
                   Home
@@ -295,6 +321,28 @@ function App() {
           </nav>
         </div>
       </header>
+
+      {/* Mobile Menu */}
+      <div
+        className={`mobile-menu-overlay ${mobileMenuOpen ? "active" : ""}`}
+        onClick={toggleMobileMenu}
+      >
+        <div
+          className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className="close-menu-button" onClick={toggleMobileMenu}>
+            <X size={24} />
+          </button>
+          <ul className="mobile-nav-list">
+            <li onClick={() => handleNavClick("hero")}>Home</li>
+            <li onClick={() => handleNavClick("about")}>About</li>
+            <li onClick={() => handleNavClick("skills")}>Skills</li>
+            <li onClick={() => handleNavClick("experience")}>Experience</li>
+            <li onClick={() => handleNavClick("contact")}>Contact</li>
+          </ul>
+        </div>
+      </div>
 
       {/* Hero Section */}
       <section id="hero" className="hero-section">
@@ -343,7 +391,7 @@ function App() {
                   <p>Companies</p>
                 </div>
                 <div className="stat-item">
-                  <h3>20+</h3>
+                  <h3>30+</h3>
                   <p>Projects</p>
                 </div>
               </div>
@@ -408,33 +456,68 @@ function App() {
         <div className="container">
           <h2 className="section-title">Contact Me</h2>
           <div className="contact-content">
-            <div className="contact-info">
-              <div className="contact-item">
-                <div className="contact-icon">📧</div>
-                <div className="contact-details">
-                  <h3>Email</h3>
-                  <p>{contactInfo.email}</p>
-                </div>
+            <div className="contact-grid">
+              <div className="contact-intro-card">
+                <h3>How to Contact Me</h3>
+                <p>
+                  Feel free to reach out through any of the channels. I'm always
+                  open to discussing new projects, opportunities, or just having
+                  a conversation about technology.
+                </p>
+                <p>
+                  I typically respond within 24-48 hours and am available for
+                  both remote and on-site opportunities in Pune, India.
+                </p>
               </div>
-              <div className="contact-item">
-                <div className="contact-icon">🌐</div>
-                <div className="contact-details">
-                  <h3>GitHub</h3>
-                  <p>{contactInfo.github}</p>
+              <div className="contact-info">
+                <div className="contact-item">
+                  <div className="contact-icon">📧</div>
+                  <div className="contact-details">
+                    <h3>Email</h3>
+                    <p>{contactInfo.email}</p>
+                  </div>
+                  <button
+                    className="copy-button"
+                    onClick={() => copyToClipboard(contactInfo.email)}
+                    aria-label="Copy email to clipboard"
+                  >
+                    {copySuccess ? <Check size={20} /> : <Copy size={20} />}
+                  </button>
                 </div>
-              </div>
-              <div className="contact-item">
-                <div className="contact-icon">👥</div>
-                <div className="contact-details">
-                  <h3>LinkedIn</h3>
-                  <p>{contactInfo.linkedin}</p>
-                </div>
-              </div>
-              <div className="contact-item">
-                <div className="contact-icon">📍</div>
-                <div className="contact-details">
-                  <h3>Location</h3>
-                  <p>{contactInfo.location}</p>
+                <a
+                  href={`https://${contactInfo.github}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-item-link"
+                >
+                  <div className="contact-item">
+                    <div className="contact-icon">🌐</div>
+                    <div className="contact-details">
+                      <h3>GitHub</h3>
+                      <p>{contactInfo.github}</p>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href={`https://${contactInfo.linkedin}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-item-link"
+                >
+                  <div className="contact-item">
+                    <div className="contact-icon">👥</div>
+                    <div className="contact-details">
+                      <h3>LinkedIn</h3>
+                      <p>{contactInfo.linkedin}</p>
+                    </div>
+                  </div>
+                </a>
+                <div className="contact-item">
+                  <div className="contact-icon">📍</div>
+                  <div className="contact-details">
+                    <h3>Location</h3>
+                    <p>{contactInfo.location}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -558,8 +641,13 @@ function App() {
         
         .header-container {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
+          position: relative;
+        }
+        
+        .logo-container {
+          z-index: 1002;
         }
         
         .logo {
@@ -574,6 +662,22 @@ function App() {
           justify-content: center;
           border-radius: 50%;
           box-shadow: var(--shadow);
+          transition: transform 0.3s ease;
+        }
+        
+        .logo.mobile-active {
+          cursor: pointer;
+        }
+        
+        .logo:hover {
+          transform: scale(1.05);
+        }
+        
+        .nav {
+          position: absolute;
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
         }
         
         .nav-list {
@@ -749,10 +853,16 @@ function App() {
           background-color: var(--bg-white);
         }
         
+        .skills-header {
+          margin-bottom: 40px;
+        }
+        
         .skills-container {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
           gap: 30px;
+          max-width: 1200px;
+          margin: 0 auto;
         }
         
         .skill-category-card {
@@ -761,6 +871,9 @@ function App() {
           padding: 30px;
           box-shadow: var(--shadow);
           transition: var(--transition);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
         
         .skill-category-card:hover {
@@ -769,7 +882,7 @@ function App() {
         }
         
         .category-title {
-          font-size: 1.8rem;
+          font-size: 1.5rem;
           font-weight: 600;
           color: var(--text-primary);
           margin-bottom: 25px;
@@ -791,11 +904,12 @@ function App() {
         .skill-list {
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 15px;
+          flex-grow: 1;
         }
         
         .skill-item {
-          margin-bottom: 15px;
+          margin-bottom: 5px;
         }
         
         .skill-info {
@@ -828,6 +942,37 @@ function App() {
           transition: width 1s ease-in-out;
         }
         
+        /* Media query adjustments for skills section */
+        @media (max-width: 768px) {
+          .skills-container {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            padding: 0 15px;
+          }
+          
+          .skill-category-card {
+            padding: 25px;
+          }
+          
+          .category-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .skills-container {
+            grid-template-columns: 1fr;
+          }
+          
+          .skill-category-card {
+            padding: 20px;
+          }
+          
+          .category-title {
+            font-size: 1.3rem;
+          }
+        }
+        
         /* Experience Section */
         .experience-section {
           padding: 100px 0;
@@ -845,22 +990,21 @@ function App() {
           position: absolute;
           top: 0;
           bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
+          left: 20px;
           width: 2px;
           background-color: var(--primary-light);
         }
         
         .experience-item {
           display: flex;
-          justify-content: space-between;
+          flex-direction: column;
           margin-bottom: 50px;
+          position: relative;
+          padding-left: 50px;
         }
         
         .experience-date {
-          width: 40%;
-          text-align: right;
-          padding-right: 30px;
+          margin-bottom: 15px;
         }
         
         .date-badge {
@@ -874,21 +1018,20 @@ function App() {
         }
         
         .experience-content {
-          width: 60%;
-          padding-left: 30px;
           position: relative;
         }
         
-        .experience-content::before {
+        .experience-item::before {
           content: '';
           position: absolute;
-          top: 0;
-          left: -8px;
+          top: 5px;
+          left: 12px;
           width: 16px;
           height: 16px;
           background-color: var(--primary-color);
           border-radius: 50%;
           border: 3px solid var(--bg-light);
+          z-index: 1;
         }
         
         .experience-title {
@@ -917,48 +1060,132 @@ function App() {
         }
         
         .contact-content {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        
+        .contact-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+          align-items: stretch;
+        }
+        
+        .contact-intro-card {
+          background-color: var(--bg-light);
+          border-radius: var(--border-radius);
+          padding: 35px;
+          box-shadow: var(--shadow);
+          border-left: 5px solid var(--primary-color);
           display: flex;
           flex-direction: column;
-          gap: 40px;
+          justify-content: center;
+          height: 100%;
+        }
+        
+        .contact-intro-card h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: var(--primary-color);
+          margin-bottom: 20px;
+        }
+        
+        .contact-intro-card p {
+          color: var(--text-secondary);
+          margin-bottom: 15px;
+          line-height: 1.7;
+          font-size: 1.05rem;
         }
         
         .contact-info {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 30px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 20px;
+          height: 100%;
+        }
+        
+        .contact-item-link {
+          display: block;
+          text-decoration: none;
+          color: inherit;
+          flex: 1;
         }
         
         .contact-item {
           display: flex;
           align-items: center;
-          gap: 20px;
-          background-color: var(--bg-gray);
-          padding: 25px;
+          gap: 25px;
+          background-color: var(--bg-light);
+          padding: 25px 30px;
           border-radius: var(--border-radius);
           box-shadow: var(--shadow);
           transition: var(--transition);
+          border-left: 3px solid transparent;
+          height: 100%;
+          position: relative;
         }
         
         .contact-item:hover {
           transform: translateY(-5px);
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          border-left: 3px solid var(--primary-color);
         }
         
         .contact-icon {
           font-size: 2rem;
           color: var(--primary-color);
+          min-width: 40px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        
+        .contact-details {
+          flex: 1;
         }
         
         .contact-details h3 {
           font-size: 1.2rem;
           font-weight: 600;
           color: var(--text-primary);
-          margin-bottom: 5px;
+          margin-bottom: 8px;
         }
         
         .contact-details p {
           color: var(--text-secondary);
           word-break: break-word;
+          font-size: 1.05rem;
+        }
+        
+        .copy-button {
+          position: absolute;
+          right: 20px;
+          top: 50%;
+          transform: translateY(-50%);
+          background-color: var(--bg-white);
+          border: none;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: var(--primary-color);
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .copy-button:hover {
+          background-color: var(--primary-color);
+          color: white;
+          transform: translateY(-50%) scale(1.1);
+        }
+        
+        .copy-button:active {
+          transform: translateY(-50%) scale(0.95);
         }
         
         /* Footer */
@@ -1000,23 +1227,20 @@ function App() {
           }
           
           .experience-item {
-            flex-direction: column;
-          }
-          
-          .experience-date, 
-          .experience-content {
-            width: 100%;
-            text-align: left;
             padding-left: 50px;
-            padding-right: 0;
           }
           
-          .experience-date {
-            margin-bottom: 10px;
-          }
-          
-          .experience-content::before {
+          .experience-item::before {
             left: 12px;
+          }
+          
+          .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+          
+          .contact-intro-card {
+            padding: 30px;
           }
         }
         
@@ -1045,8 +1269,17 @@ function App() {
             display: none;
           }
           
-          .header-container {
-            justify-content: center;
+          .contact-intro-card {
+            padding: 25px;
+          }
+          
+          .contact-intro-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+          }
+          
+          .contact-item {
+            padding: 20px 25px;
           }
         }
         
@@ -1077,13 +1310,26 @@ function App() {
             padding: 20px;
           }
           
-          .category-title {
-            font-size: 1.5rem;
+          .experience-item {
+            padding-left: 40px;
           }
           
-          .experience-date, 
-          .experience-content {
-            padding-left: 40px;
+          .experience-item::before {
+            left: 11px;
+          }
+          
+          .contact-intro-card {
+            padding: 20px;
+          }
+          
+          .contact-item {
+            padding: 18px 20px;
+            gap: 15px;
+          }
+          
+          .contact-icon {
+            font-size: 1.8rem;
+            min-width: 30px;
           }
         }
         
@@ -1092,6 +1338,153 @@ function App() {
           html {
             -webkit-text-size-adjust: 100%;
           }
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 2000;
+          opacity: 0;
+          visibility: hidden;
+          transition: opacity 0.3s ease, visibility 0.3s ease;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding-top: 80px;
+        }
+        
+        .mobile-menu-overlay.active {
+          opacity: 1;
+          visibility: visible;
+        }
+        
+        .mobile-menu {
+          width: 90%;
+          max-width: 350px;
+          background-color: var(--bg-white);
+          border-radius: var(--border-radius);
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+          padding: 25px;
+          z-index: 2001;
+          transform: translateY(-50px) scale(0.8);
+          opacity: 0;
+          transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
+          overflow: hidden;
+          position: relative;
+        }
+        
+        .mobile-menu::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-white) 100%);
+          z-index: -1;
+        }
+        
+        .mobile-menu.open {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+        
+        .close-menu-button {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          background: none;
+          border: none;
+          color: var(--text-primary);
+          cursor: pointer;
+          padding: 5px;
+        }
+        
+        .mobile-nav-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          margin-top: 20px;
+        }
+        
+        .mobile-nav-list li {
+          padding: 15px 10px;
+          border-bottom: 1px solid var(--bg-light);
+          font-weight: 500;
+          color: var(--text-primary);
+          cursor: pointer;
+          transition: all 0.3s ease;
+          transform: translateX(-20px);
+          opacity: 0;
+          animation: slideIn 0.5s forwards;
+          animation-delay: calc(0.1s * var(--i, 0));
+        }
+        
+        .mobile-nav-list li:last-child {
+          border-bottom: none;
+        }
+        
+        .mobile-nav-list li:hover {
+          color: var(--primary-color);
+          background-color: var(--bg-light);
+          border-radius: 8px;
+          padding-left: 15px;
+        }
+        
+        @keyframes slideIn {
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        /* Media Queries */
+        @media (max-width: 992px) {
+          .desktop-nav {
+            display: none;
+          }
+          
+          .logo.mobile-active::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            animation: pulse 2s infinite;
+          }
+          
+          @keyframes pulse {
+            0% {
+              transform: scale(1);
+              border-color: rgba(37, 99, 235, 0);
+            }
+            50% {
+              transform: scale(1.1);
+              border-color: rgba(37, 99, 235, 0.5);
+            }
+            100% {
+              transform: scale(1);
+              border-color: rgba(37, 99, 235, 0);
+            }
+          }
+        }
+        
+        @media (max-width: 768px) {
+          .logo::after {
+            display: block;
+          }
+          
+          .mobile-nav-list li:nth-child(1) { --i: 1; }
+          .mobile-nav-list li:nth-child(2) { --i: 2; }
+          .mobile-nav-list li:nth-child(3) { --i: 3; }
+          .mobile-nav-list li:nth-child(4) { --i: 4; }
+          .mobile-nav-list li:nth-child(5) { --i: 5; }
         }
       `}</style>
     </div>
