@@ -33,6 +33,8 @@ import {
   Play,
   Moon,
   Sun,
+  Copy,
+  Check,
 } from "lucide-react";
 import "./App.css";
 
@@ -41,6 +43,7 @@ function App() {
   const [isAboutVisible, setIsAboutVisible] = useState(false);
   const [typedText, setTypedText] = useState("");
   const aboutRef = useRef(null);
+  const [copySuccess, setCopySuccess] = useState(false);
 
   // Calculate years of experience automatically from August 2021
   const calculateExperience = () => {
@@ -225,6 +228,19 @@ function App() {
     location: "Pune, India",
   };
 
+  // Function to copy email to clipboard
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopySuccess(true);
+        setTimeout(() => setCopySuccess(false), 2000);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
+
   return (
     <div className="App">
       {/* Header with navigation */}
@@ -375,54 +391,68 @@ function App() {
         <div className="container">
           <h2 className="section-title">Contact Me</h2>
           <div className="contact-content">
-            <div className="contact-info">
-              <a
-                href="mailto:rayvantdurani.corporate@gmail.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-item-link"
-              >
+            <div className="contact-grid">
+              <div className="contact-intro-card">
+                <h3>How to Contact Me</h3>
+                <p>
+                  Feel free to reach out through any of the channels below. I'm
+                  always open to discussing new projects, opportunities, or just
+                  having a conversation about technology.
+                </p>
+                <p>
+                  I typically respond within 24-48 hours and am available for
+                  both remote and on-site opportunities in Pune, India.
+                </p>
+              </div>
+              <div className="contact-info">
                 <div className="contact-item">
                   <div className="contact-icon">📧</div>
                   <div className="contact-details">
                     <h3>Email</h3>
                     <p>{contactInfo.email}</p>
                   </div>
+                  <button
+                    className="copy-button"
+                    onClick={() => copyToClipboard(contactInfo.email)}
+                    aria-label="Copy email to clipboard"
+                  >
+                    {copySuccess ? <Check size={20} /> : <Copy size={20} />}
+                  </button>
                 </div>
-              </a>
-              <a
-                href="https://github.com/rayvantdurani"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-item-link"
-              >
-                <div className="contact-item">
-                  <div className="contact-icon">🌐</div>
-                  <div className="contact-details">
-                    <h3>GitHub</h3>
-                    <p>{contactInfo.github}</p>
+                <a
+                  href={`https://${contactInfo.github}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-item-link"
+                >
+                  <div className="contact-item">
+                    <div className="contact-icon">🌐</div>
+                    <div className="contact-details">
+                      <h3>GitHub</h3>
+                      <p>{contactInfo.github}</p>
+                    </div>
                   </div>
-                </div>
-              </a>
-              <a
-                href="https://linkedin.com/in/rayvantdurani"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contact-item-link"
-              >
-                <div className="contact-item">
-                  <div className="contact-icon">👥</div>
-                  <div className="contact-details">
-                    <h3>LinkedIn</h3>
-                    <p>{contactInfo.linkedin}</p>
+                </a>
+                <a
+                  href={`https://${contactInfo.linkedin}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-item-link"
+                >
+                  <div className="contact-item">
+                    <div className="contact-icon">👥</div>
+                    <div className="contact-details">
+                      <h3>LinkedIn</h3>
+                      <p>{contactInfo.linkedin}</p>
+                    </div>
                   </div>
-                </div>
-              </a>
-              <div className="contact-item">
-                <div className="contact-icon">📍</div>
-                <div className="contact-details">
-                  <h3>Location</h3>
-                  <p>{contactInfo.location}</p>
+                </a>
+                <div className="contact-item">
+                  <div className="contact-icon">📍</div>
+                  <div className="contact-details">
+                    <h3>Location</h3>
+                    <p>{contactInfo.location}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -944,48 +974,132 @@ function App() {
         }
         
         .contact-content {
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        
+        .contact-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+          align-items: stretch;
+        }
+        
+        .contact-intro-card {
+          background-color: var(--bg-light);
+          border-radius: var(--border-radius);
+          padding: 35px;
+          box-shadow: var(--shadow);
+          border-left: 5px solid var(--primary-color);
           display: flex;
           flex-direction: column;
-          gap: 40px;
+          justify-content: center;
+          height: 100%;
+        }
+        
+        .contact-intro-card h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: var(--primary-color);
+          margin-bottom: 20px;
+        }
+        
+        .contact-intro-card p {
+          color: var(--text-secondary);
+          margin-bottom: 15px;
+          line-height: 1.7;
+          font-size: 1.05rem;
         }
         
         .contact-info {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 30px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          gap: 20px;
+          height: 100%;
+        }
+        
+        .contact-item-link {
+          display: block;
+          text-decoration: none;
+          color: inherit;
+          flex: 1;
         }
         
         .contact-item {
           display: flex;
           align-items: center;
-          gap: 20px;
-          background-color: var(--bg-gray);
-          padding: 25px;
+          gap: 25px;
+          background-color: var(--bg-light);
+          padding: 25px 30px;
           border-radius: var(--border-radius);
           box-shadow: var(--shadow);
           transition: var(--transition);
+          border-left: 3px solid transparent;
+          height: 100%;
+          position: relative;
         }
         
         .contact-item:hover {
           transform: translateY(-5px);
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          border-left: 3px solid var(--primary-color);
         }
         
         .contact-icon {
           font-size: 2rem;
           color: var(--primary-color);
+          min-width: 40px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        
+        .contact-details {
+          flex: 1;
         }
         
         .contact-details h3 {
           font-size: 1.2rem;
           font-weight: 600;
           color: var(--text-primary);
-          margin-bottom: 5px;
+          margin-bottom: 8px;
         }
         
         .contact-details p {
           color: var(--text-secondary);
           word-break: break-word;
+          font-size: 1.05rem;
+        }
+        
+        .copy-button {
+          position: absolute;
+          right: 20px;
+          top: 50%;
+          transform: translateY(-50%);
+          background-color: var(--bg-white);
+          border: none;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: var(--primary-color);
+          transition: all 0.2s ease;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .copy-button:hover {
+          background-color: var(--primary-color);
+          color: white;
+          transform: translateY(-50%) scale(1.1);
+        }
+        
+        .copy-button:active {
+          transform: translateY(-50%) scale(0.95);
         }
         
         /* Footer */
@@ -1033,6 +1147,15 @@ function App() {
           .experience-item::before {
             left: 12px;
           }
+          
+          .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+          }
+          
+          .contact-intro-card {
+            padding: 30px;
+          }
         }
         
         @media (max-width: 768px) {
@@ -1060,8 +1183,17 @@ function App() {
             display: none;
           }
           
-          .header-container {
-            justify-content: center;
+          .contact-intro-card {
+            padding: 25px;
+          }
+          
+          .contact-intro-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+          }
+          
+          .contact-item {
+            padding: 20px 25px;
           }
         }
         
@@ -1099,6 +1231,20 @@ function App() {
           .experience-item::before {
             left: 11px;
           }
+          
+          .contact-intro-card {
+            padding: 20px;
+          }
+          
+          .contact-item {
+            padding: 18px 20px;
+            gap: 15px;
+          }
+          
+          .contact-icon {
+            font-size: 1.8rem;
+            min-width: 30px;
+          }
         }
         
         /* Add viewport meta tag for proper mobile scaling */
@@ -1106,51 +1252,6 @@ function App() {
           html {
             -webkit-text-size-adjust: 100%;
           }
-        }
-        
-        /* Contact Section Styles - Add this to your CSS */
-        .contact-item-link {
-          display: block;
-          text-decoration: none;
-          color: inherit;
-        }
-        
-        .contact-item-link:hover .contact-item {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .contact-item {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-          background-color: var(--bg-gray);
-          padding: 25px;
-          border-radius: var(--border-radius);
-          box-shadow: var(--shadow);
-          transition: var(--transition);
-        }
-        
-        .contact-item:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        }
-        
-        .contact-icon {
-          font-size: 2rem;
-          color: var(--primary-color);
-        }
-        
-        .contact-details h3 {
-          font-size: 1.2rem;
-          font-weight: 600;
-          color: var(--text-primary);
-          margin-bottom: 5px;
-        }
-        
-        .contact-details p {
-          color: var(--text-secondary);
-          word-break: break-word;
         }
       `}</style>
     </div>
