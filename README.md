@@ -1,27 +1,12 @@
-# Getting Started with Create React App
+# React + Vite
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Available Scripts
+Currently, two official plugins are available:
 
-In the project directory, you can run:
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### `npm start`
+## Expanding the ESLint configuration
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-Or you can visit https://rayvantportfolio.netlify.app/ 
-
-![image](https://github.com/rayvantdurani/PortfolioUI/assets/49509146/b049ac36-f839-4d43-98ca-09243e6011d9)
-
-
-
-Welcome to my personal portfolio site! I'm Rayvant Durani, a web developer based in Pune with a passion for building beautiful, user-friendly websites and web applications.
-
-On this site, you'll find a showcase of my front-end development projects, detailing my skillset. I'm always experimenting with new frameworks and development tools to expand my skillset. 
-
-Beyond the projects featured, my site includes details about my web development background, technology stack, code samples, and contact information. I designed and hand-coded this site myself using HTML, CSS, and JavaScript and REACT JS
-
-Whether you're a potential employer, client, or just a curious developer, thanks for stopping by! I hope you enjoy looking through my featured work and learning more about my development journey so far. Feel free to get in touch via the contact page if you'd like to connect!
-
+If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
