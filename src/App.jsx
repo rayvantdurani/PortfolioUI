@@ -48,7 +48,7 @@ function App() {
     const currentDate = new Date();
     const diffInYears =
       (currentDate - startDate) / (1000 * 60 * 60 * 24 * 365.25);
-    return Math.floor(diffInYears);
+    return Math.round(diffInYears);
   };
 
   const yearsOfExperience = calculateExperience();
@@ -105,9 +105,8 @@ function App() {
       skills: [
         { name: "Java 8", level: 90 },
         { name: "Java 11", level: 85 },
-        { name: "JavaScript", level: 75 },
-        { name: "TypeScript", level: 70 },
-        { name: "Python", level: 65 },
+        { name: "JavaScript", level: 60 },
+        { name: "Python", level: 60 },
       ],
     },
     {
@@ -115,8 +114,7 @@ function App() {
       skills: [
         { name: "HTML", level: 80 },
         { name: "CSS", level: 75 },
-        { name: "React", level: 70 },
-        { name: "Angular", level: 65 },
+        { name: "React", level: 65 },
         { name: "REST APIs", level: 90 },
       ],
     },
@@ -135,8 +133,6 @@ function App() {
       skills: [
         { name: "JUnit 5", level: 80 },
         { name: "Mockito", level: 75 },
-        { name: "TestNG", level: 70 },
-        { name: "Selenium", level: 65 },
       ],
     },
     {
@@ -203,47 +199,18 @@ function App() {
     },
   ];
 
-  // Projects data
-  const projectsData = [
-    {
-      title: "Enterprise Microservice Architecture",
-      description:
-        "Designed and implemented a scalable microservice architecture using Spring Boot and Docker, with Kubernetes for orchestration.",
-      image:
-        "https://placehold.co/600x400/333/white?text=Microservice+Architecture",
-      demoLink: "#",
-      sourceLink: "#",
-      technologies: ["Java 11", "Spring Boot", "Docker", "Kubernetes"],
-      views: "2.4M views",
-      timestamp: "1 month ago",
-      duration: "18:24",
-    },
-    {
-      title: "Secure API Gateway",
-      description:
-        "Developed a secure API gateway with OAuth2 and JWT implementation, handling authentication and authorization for microservices.",
-      image: "https://placehold.co/600x400/333/white?text=API+Gateway",
-      demoLink: "#",
-      sourceLink: "#",
-      technologies: ["Spring Security", "OAuth2", "JWT", "Java"],
-      views: "1.8M views",
-      timestamp: "2 months ago",
-      duration: "12:56",
-    },
-  ];
-
   // Work experience data
   const workExperience = [
     {
       company: "THG",
-      position: "Senior Java Developer",
+      position: "Software Engineer",
       period: "Aug 2024 - Present",
       description:
         "Working on ecommerce platform development using Java, Spring Boot, and microservices architecture. Responsible for designing and implementing scalable backend services for high-traffic ecommerce applications.",
     },
     {
       company: "HSBC",
-      position: "Java Developer",
+      position: "Senior Software Engineer",
       period: "Aug 2021 - Aug 2024",
       description:
         "Developed and maintained financial applications using Java, Spring Boot, and RESTful APIs. Worked on high-performance, secure banking solutions. Implemented microservices architecture and contributed to the digital transformation initiatives.",
@@ -409,27 +376,48 @@ function App() {
           <h2 className="section-title">Contact Me</h2>
           <div className="contact-content">
             <div className="contact-info">
-              <div className="contact-item">
-                <div className="contact-icon">📧</div>
-                <div className="contact-details">
-                  <h3>Email</h3>
-                  <p>{contactInfo.email}</p>
+              <a
+                href="mailto:rayvantdurani.corporate@gmail.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-item-link"
+              >
+                <div className="contact-item">
+                  <div className="contact-icon">📧</div>
+                  <div className="contact-details">
+                    <h3>Email</h3>
+                    <p>{contactInfo.email}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="contact-item">
-                <div className="contact-icon">🌐</div>
-                <div className="contact-details">
-                  <h3>GitHub</h3>
-                  <p>{contactInfo.github}</p>
+              </a>
+              <a
+                href="https://github.com/rayvantdurani"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-item-link"
+              >
+                <div className="contact-item">
+                  <div className="contact-icon">🌐</div>
+                  <div className="contact-details">
+                    <h3>GitHub</h3>
+                    <p>{contactInfo.github}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="contact-item">
-                <div className="contact-icon">👥</div>
-                <div className="contact-details">
-                  <h3>LinkedIn</h3>
-                  <p>{contactInfo.linkedin}</p>
+              </a>
+              <a
+                href="https://linkedin.com/in/rayvantdurani"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-item-link"
+              >
+                <div className="contact-item">
+                  <div className="contact-icon">👥</div>
+                  <div className="contact-details">
+                    <h3>LinkedIn</h3>
+                    <p>{contactInfo.linkedin}</p>
+                  </div>
                 </div>
-              </div>
+              </a>
               <div className="contact-item">
                 <div className="contact-icon">📍</div>
                 <div className="contact-details">
@@ -749,10 +737,16 @@ function App() {
           background-color: var(--bg-white);
         }
         
+        .skills-header {
+          margin-bottom: 40px;
+        }
+        
         .skills-container {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
           gap: 30px;
+          max-width: 1200px;
+          margin: 0 auto;
         }
         
         .skill-category-card {
@@ -761,6 +755,9 @@ function App() {
           padding: 30px;
           box-shadow: var(--shadow);
           transition: var(--transition);
+          height: 100%;
+          display: flex;
+          flex-direction: column;
         }
         
         .skill-category-card:hover {
@@ -769,7 +766,7 @@ function App() {
         }
         
         .category-title {
-          font-size: 1.8rem;
+          font-size: 1.5rem;
           font-weight: 600;
           color: var(--text-primary);
           margin-bottom: 25px;
@@ -791,11 +788,12 @@ function App() {
         .skill-list {
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 15px;
+          flex-grow: 1;
         }
         
         .skill-item {
-          margin-bottom: 15px;
+          margin-bottom: 5px;
         }
         
         .skill-info {
@@ -828,6 +826,37 @@ function App() {
           transition: width 1s ease-in-out;
         }
         
+        /* Media query adjustments for skills section */
+        @media (max-width: 768px) {
+          .skills-container {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            padding: 0 15px;
+          }
+          
+          .skill-category-card {
+            padding: 25px;
+          }
+          
+          .category-title {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .skills-container {
+            grid-template-columns: 1fr;
+          }
+          
+          .skill-category-card {
+            padding: 20px;
+          }
+          
+          .category-title {
+            font-size: 1.3rem;
+          }
+        }
+        
         /* Experience Section */
         .experience-section {
           padding: 100px 0;
@@ -845,22 +874,21 @@ function App() {
           position: absolute;
           top: 0;
           bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
+          left: 20px;
           width: 2px;
           background-color: var(--primary-light);
         }
         
         .experience-item {
           display: flex;
-          justify-content: space-between;
+          flex-direction: column;
           margin-bottom: 50px;
+          position: relative;
+          padding-left: 50px;
         }
         
         .experience-date {
-          width: 40%;
-          text-align: right;
-          padding-right: 30px;
+          margin-bottom: 15px;
         }
         
         .date-badge {
@@ -874,21 +902,20 @@ function App() {
         }
         
         .experience-content {
-          width: 60%;
-          padding-left: 30px;
           position: relative;
         }
         
-        .experience-content::before {
+        .experience-item::before {
           content: '';
           position: absolute;
-          top: 0;
-          left: -8px;
+          top: 5px;
+          left: 12px;
           width: 16px;
           height: 16px;
           background-color: var(--primary-color);
           border-radius: 50%;
           border: 3px solid var(--bg-light);
+          z-index: 1;
         }
         
         .experience-title {
@@ -1000,22 +1027,10 @@ function App() {
           }
           
           .experience-item {
-            flex-direction: column;
-          }
-          
-          .experience-date, 
-          .experience-content {
-            width: 100%;
-            text-align: left;
             padding-left: 50px;
-            padding-right: 0;
           }
           
-          .experience-date {
-            margin-bottom: 10px;
-          }
-          
-          .experience-content::before {
+          .experience-item::before {
             left: 12px;
           }
         }
@@ -1077,13 +1092,12 @@ function App() {
             padding: 20px;
           }
           
-          .category-title {
-            font-size: 1.5rem;
+          .experience-item {
+            padding-left: 40px;
           }
           
-          .experience-date, 
-          .experience-content {
-            padding-left: 40px;
+          .experience-item::before {
+            left: 11px;
           }
         }
         
@@ -1092,6 +1106,51 @@ function App() {
           html {
             -webkit-text-size-adjust: 100%;
           }
+        }
+        
+        /* Contact Section Styles - Add this to your CSS */
+        .contact-item-link {
+          display: block;
+          text-decoration: none;
+          color: inherit;
+        }
+        
+        .contact-item-link:hover .contact-item {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-item {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          background-color: var(--bg-gray);
+          padding: 25px;
+          border-radius: var(--border-radius);
+          box-shadow: var(--shadow);
+          transition: var(--transition);
+        }
+        
+        .contact-item:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-icon {
+          font-size: 2rem;
+          color: var(--primary-color);
+        }
+        
+        .contact-details h3 {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin-bottom: 5px;
+        }
+        
+        .contact-details p {
+          color: var(--text-secondary);
+          word-break: break-word;
         }
       `}</style>
     </div>
