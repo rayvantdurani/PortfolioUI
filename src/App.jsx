@@ -37,6 +37,7 @@ import {
   Check,
 } from "lucide-react";
 import "./App.css";
+import profileImage from "./Images/Rayvant_Passport.jpg"; // Adjust the path if needed
 
 function App() {
   // State for about section
@@ -418,7 +419,13 @@ function App() {
               </a>
             </div>
           </div>
-          <div className="profile-placeholder">RD</div>
+          <div className="profile-image-container">
+            <img
+              src={profileImage}
+              alt="Rayvant Durani"
+              className="profile-image"
+            />
+          </div>
         </div>
       </section>
 
@@ -792,7 +799,7 @@ function App() {
         
         /* Hero Section */
         .hero-section {
-          padding: 150px 0 100px;
+          padding: 200px 0 120px;
           background-color: var(--bg-white);
         }
         
@@ -800,7 +807,8 @@ function App() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 50px;
+          gap: 60px;
+          padding: 0 20px;
         }
         
         .hero-content {
@@ -834,19 +842,37 @@ function App() {
           gap: 20px;
         }
         
-        .profile-placeholder {
-          width: 300px;
-          height: 300px;
-          background-color: var(--bg-light);
+        .profile-image-container {
+          width: 340px;
+          height: 340px;
           border-radius: 50%;
+          overflow: hidden;
+          border: none;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 
+                      0 0 0 10px var(--bg-white),
+                      0 0 0 11px rgba(0, 0, 0, 0.08);
+          transition: box-shadow 0.5s ease;
+          position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 5rem;
-          font-weight: 700;
-          color: var(--primary-color);
-          border: 8px solid var(--primary-light);
-          box-shadow: var(--shadow);
+        }
+        
+        .dark-theme .profile-image-container {
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 
+                      0 0 0 10px var(--bg-white),
+                      0 0 0 11px rgba(255, 255, 255, 0.1);
+        }
+        
+        .profile-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease, filter 0.5s ease;
+        }
+        
+        .profile-image-container:hover .profile-image {
+          transform: scale(1.05);
         }
         
         /* About Section */
@@ -1294,11 +1320,10 @@ function App() {
             justify-content: center;
           }
           
-          .profile-placeholder {
-            width: 250px;
-            height: 250px;
-            font-size: 4rem;
-            margin-bottom: 30px;
+          .profile-image-container {
+            width: 280px;
+            height: 280px;
+            margin-bottom: 40px;
           }
           
           .experience-timeline::before {
@@ -1371,10 +1396,9 @@ function App() {
             font-size: 1.2rem;
           }
           
-          .profile-placeholder {
-            width: 200px;
-            height: 200px;
-            font-size: 3rem;
+          .profile-image-container {
+            width: 220px;
+            height: 220px;
           }
           
           .about-card {
@@ -1596,7 +1620,7 @@ function App() {
         }
         
         /* Dark Mode Specific Styles */
-        .dark-theme .profile-placeholder {
+        .dark-theme .profile-image-container {
           border-color: var(--primary-dark);
         }
         
