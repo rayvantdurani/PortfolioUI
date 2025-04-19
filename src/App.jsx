@@ -533,85 +533,72 @@ function App() {
                   </div>
                 )}
 
-                {skillsCategories.map((category, index) => (
-                  <div
-                    key={index}
-                    className={`skill-category-card carousel-card ${
-                      index === currentSkillIndex ? "active" : ""
-                    }`}
-                    style={{
-                      transform: `translateX(${
-                        (index - currentSkillIndex) * 105
-                      }%)`,
-                      opacity: index === currentSkillIndex ? 1 : 0.5,
-                      visibility:
-                        Math.abs(index - currentSkillIndex) > 1
-                          ? "hidden"
-                          : "visible",
-                      position: "absolute",
-                      left: 0,
-                      top: 0,
-                      width: "100%",
-                    }}
-                  >
-                    <h3 className="category-title">{category.name}</h3>
-                    <div className="skill-list">
-                      {category.skills.map((skill, skillIndex) => (
-                        <div key={skillIndex} className="skill-item">
-                          <div className="skill-info">
-                            <span className="skill-name">{skill.name}</span>
-                            <span className="skill-percentage">
-                              {skill.level}%
-                            </span>
+                {skillsCategories.map((category, index) => {
+                  // Determine if this card has many items (more than 6)
+                  const hasMany = category.skills.length > 6;
+
+                  return (
+                    <div
+                      key={index}
+                      className={`skill-category-card carousel-card ${
+                        index === currentSkillIndex ? "active" : ""
+                      } ${hasMany ? "many-items" : ""}`}
+                      style={{
+                        transform: `translateX(${
+                          (index - currentSkillIndex) * 105
+                        }%)`,
+                        opacity: index === currentSkillIndex ? 1 : 0.5,
+                        visibility:
+                          Math.abs(index - currentSkillIndex) > 1
+                            ? "hidden"
+                            : "visible",
+                        position: "absolute",
+                        left: 0,
+                        top: 0,
+                        width: "100%",
+                      }}
+                      ref={(el) => {
+                        // Check if card needs scroll indicator
+                        if (el && index === currentSkillIndex) {
+                          // Add 'can-scroll' class if content overflows
+                          setTimeout(() => {
+                            if (el.scrollHeight > el.clientHeight) {
+                              el.classList.add("can-scroll");
+                            } else {
+                              el.classList.remove("can-scroll");
+                            }
+                          }, 300);
+                        }
+                      }}
+                    >
+                      <h3 className="category-title">{category.name}</h3>
+                      <div className="skill-list">
+                        {category.skills.map((skill, skillIndex) => (
+                          <div key={skillIndex} className="skill-item">
+                            <div className="skill-info">
+                              <span className="skill-name">{skill.name}</span>
+                              <span className="skill-percentage">
+                                {skill.level}%
+                              </span>
+                            </div>
+                            <div className="skill-progress">
+                              <div
+                                className="skill-progress-bar"
+                                style={{ width: `${skill.level}%` }}
+                              ></div>
+                            </div>
                           </div>
-                          <div className="skill-progress">
-                            <div
-                              className="skill-progress-bar"
-                              style={{ width: `${skill.level}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
+
+                      {/* Scroll indicator arrow - only shows when content overflows */}
+                      <div className="scroll-indicator">↓</div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
-              {/* Pagination dots */}
-              <div className="carousel-pagination">
-                {skillsCategories.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`pagination-dot ${
-                      index === currentSkillIndex ? "active" : ""
-                    }`}
-                    onClick={() => goToSkillIndex(index)}
-                  />
-                ))}
-              </div>
-
-              {/* Navigation controls */}
-              <div className="carousel-controls">
-                <button
-                  className="carousel-control prev"
-                  onClick={handlePrevSkill}
-                  disabled={currentSkillIndex === 0}
-                  aria-label="Previous skill category"
-                >
-                  &lt;
-                </button>
-
-                <button
-                  className="carousel-control next"
-                  onClick={handleNextSkill}
-                  disabled={currentSkillIndex === skillsCategories.length - 1}
-                  aria-label="Next skill category"
-                >
-                  &gt;
-                </button>
-              </div>
-
-              {/* Swipe indicator text - will fade out after user interacts */}
+              {/* Swipe indicator text - will show for the first card */}
               {currentSkillIndex === 0 && (
                 <div className="swipe-indicator">Swipe to see more skills</div>
               )}
@@ -1876,149 +1863,97 @@ function App() {
           margin: 0 auto;
           overflow: hidden;
           padding: 20px 0;
-          padding-bottom: 30px;
+          padding-bottom: 15px;
         }
         
         .skills-carousel {
           width: 100%;
           position: relative;
           touch-action: pan-y;
-          /* Height that matches the image example */
-          height: 400px;
+          /* Use auto height */
+          height: auto;
+          min-height: 450px;
         }
         
         .carousel-card {
           position: absolute;
           width: 100%;
-          height: 100%;
+          height: auto; /* Auto height instead of fixed */
+          max-height: 85vh; /* Maximum height constraint */
           transition: transform 0.3s ease, opacity 0.3s ease;
-          background-color: rgba(0, 0, 0, 0.2);  /* Match the dark semi-transparent background */
+          background-color: rgba(0, 0, 0, 0.2);
           border-radius: 12px;
-          padding: 25px 30px;  /* Increased horizontal padding */
+          padding: 20px 25px;
           box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-          overflow: hidden;
           display: flex;
           flex-direction: column;
+          /* Enable scrolling but with a clean design */
+          overflow-y: auto;
+          /* Hide scrollbar for clean look */
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE/Edge */
         }
         
-        .carousel-card .category-title {
-          text-align: center;
-          margin-bottom: 30px;
-          font-size: 1.8rem;
-          font-weight: bold;
+        /* Hide scrollbar for Chrome/Safari/Opera */
+        .carousel-card::-webkit-scrollbar {
+          display: none;
         }
         
-        .carousel-card .skill-list {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;  /* Larger gap between skill items */
-          flex-grow: 1;
+        /* Detect cards with many items and apply compact styling */
+        .carousel-card.many-items .skill-list {
+          gap: 10px !important;
         }
         
-        .carousel-card .skill-item {
-          margin-bottom: 0;  /* Remove extra margin */
+        .carousel-card.many-items .skill-item {
+          margin-bottom: 0 !important;
         }
         
-        .carousel-card .skill-info {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 5px;
+        .carousel-card.many-items .skill-info {
+          margin-bottom: 2px !important;
         }
         
-        .carousel-card .skill-progress {
-          height: 8px;  /* Match the height in the image */
-          background-color: rgba(255, 255, 255, 0.1);  /* Lighter background for the progress bar */
-          border-radius: 4px;
-          overflow: hidden;
-        }
-        
-        .carousel-card .skill-progress-bar {
-          height: 100%;
-          background-color: #1f7fea;  /* Match the blue color */
-          border-radius: 4px;
-        }
-        
-        /* Position controls at the bottom center */
-        .carousel-controls {
-          display: flex;
-          justify-content: center;
-          align-items: center;
+        /* Add scroll indicator for cards with overflow */
+        .scroll-indicator {
           position: absolute;
-          bottom: -60px;  /* Position below the card like in the image */
-          left: 0;
-          right: 0;
-          gap: 20px;
-          z-index: 30;
-        }
-        
-        .carousel-control {
-          width: 45px;
-          height: 45px;
+          bottom: 12px;
+          right: 12px;
+          width: 30px;
+          height: 30px;
           border-radius: 50%;
-          border: none;
-          background-color: #1f7fea;  /* Match the blue color */
-          color: white;
-          font-size: 1.5rem;
-          font-weight: bold;
-          cursor: pointer;
+          background-color: rgba(31, 127, 234, 0.8);
           display: flex;
-          align-items: center;
           justify-content: center;
-          transition: all 0.2s ease;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          align-items: center;
+          color: white;
+          font-size: 18px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          z-index: 40;
         }
         
-        .carousel-control:hover:not(:disabled) {
-          transform: scale(1.1);
-          background-color: #1868c7;
+        .carousel-card.can-scroll .scroll-indicator {
+          opacity: 1;
+          animation: pulseIndicator 2s infinite;
         }
         
-        .carousel-control:active:not(:disabled) {
-          transform: scale(0.95);
+        @keyframes pulseIndicator {
+          0% { transform: translateY(0); opacity: 0.8; }
+          50% { transform: translateY(5px); opacity: 1; }
+          100% { transform: translateY(0); opacity: 0.8; }
         }
         
-        .carousel-control:disabled {
-          background-color: #4a4a5a;
-          cursor: not-allowed;
-          opacity: 0.5;
-        }
-        
-        /* Add more spacing to the container to accommodate the buttons */
-        #skills {
-          padding-bottom: 60px;
+        /* Position controls properly below content */
+        .carousel-controls {
+          display: none; /* Hide the navigation buttons */
         }
         
         /* Add styles for pagination indicators */
         .carousel-pagination {
-          display: flex;
-          justify-content: center;
-          gap: 8px;
-          position: absolute;
-          bottom: -30px;
-          left: 0;
-          right: 0;
-          z-index: 20;
+          display: none; /* Hide the pagination dots */
         }
         
-        .pagination-dot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: rgba(255, 255, 255, 0.3);
-          transition: all 0.3s ease;
-        }
-        
-        .pagination-dot.active {
-          background-color: #1f7fea;
-          transform: scale(1.2);
-        }
-        
-        /* Add peek effect for adjacent cards */
-        .carousel-card:not(.active) {
-          opacity: 0.2 !important; /* Make non-active cards slightly visible */
-        }
-        
-        /* Add swipe hint animation */
+        /* Bring back swipe hint animation */
         @keyframes swipeHint {
           0% { transform: translateX(0); }
           75% { transform: translateX(10px); }
@@ -2030,8 +1965,8 @@ function App() {
           right: 15px;
           top: 50%;
           transform: translateY(-50%);
-          color: rgba(255, 255, 255, 0.7);
-          font-size: 20px;
+          color: rgba(255, 255, 255, 0.8); /* More visible hint */
+          font-size: 22px; /* Larger arrow */
           animation: swipeHint 1.5s infinite;
           z-index: 25;
           pointer-events: none;
@@ -2043,16 +1978,17 @@ function App() {
           opacity: 1;
         }
         
-        /* Add swipe indicator text */
+        /* Add text swipe indicator style back */
         .swipe-indicator {
           position: absolute;
           bottom: -25px;
           left: 0;
           right: 0;
           text-align: center;
-          font-size: 0.8rem;
-          color: rgba(255, 255, 255, 0.7);
+          font-size: 0.9rem; /* Slightly larger text */
+          color: rgba(255, 255, 255, 0.8); /* More visible text */
           pointer-events: none;
+          opacity: 0.9;
         }
       `}</style>
     </div>
