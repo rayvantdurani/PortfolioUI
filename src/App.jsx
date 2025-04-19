@@ -522,6 +522,17 @@ function App() {
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
               >
+                {/* Swipe hint arrow - will be shown initially */}
+                {currentSkillIndex < skillsCategories.length - 1 && (
+                  <div
+                    className={`swipe-hint ${
+                      currentSkillIndex === 0 ? "visible" : ""
+                    }`}
+                  >
+                    ⟩
+                  </div>
+                )}
+
                 {skillsCategories.map((category, index) => (
                   <div
                     key={index}
@@ -530,10 +541,17 @@ function App() {
                     }`}
                     style={{
                       transform: `translateX(${
-                        (index - currentSkillIndex) * 100
+                        (index - currentSkillIndex) * 105
                       }%)`,
-                      opacity: index === currentSkillIndex ? 1 : 0.8,
-                      zIndex: index === currentSkillIndex ? 2 : 1,
+                      opacity: index === currentSkillIndex ? 1 : 0.5,
+                      visibility:
+                        Math.abs(index - currentSkillIndex) > 1
+                          ? "hidden"
+                          : "visible",
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      width: "100%",
                     }}
                   >
                     <h3 className="category-title">{category.name}</h3>
@@ -559,6 +577,19 @@ function App() {
                 ))}
               </div>
 
+              {/* Pagination dots */}
+              <div className="carousel-pagination">
+                {skillsCategories.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`pagination-dot ${
+                      index === currentSkillIndex ? "active" : ""
+                    }`}
+                    onClick={() => goToSkillIndex(index)}
+                  />
+                ))}
+              </div>
+
               {/* Navigation controls */}
               <div className="carousel-controls">
                 <button
@@ -570,20 +601,6 @@ function App() {
                   &lt;
                 </button>
 
-                {/* Carousel indicators */}
-                <div className="carousel-indicators">
-                  {skillsCategories.map((_, index) => (
-                    <span
-                      key={index}
-                      className={`carousel-indicator ${
-                        index === currentSkillIndex ? "active" : ""
-                      }`}
-                      onClick={() => goToSkillIndex(index)}
-                      aria-label={`Go to skill category ${index + 1}`}
-                    ></span>
-                  ))}
-                </div>
-
                 <button
                   className="carousel-control next"
                   onClick={handleNextSkill}
@@ -593,6 +610,11 @@ function App() {
                   &gt;
                 </button>
               </div>
+
+              {/* Swipe indicator text - will fade out after user interacts */}
+              {currentSkillIndex === 0 && (
+                <div className="swipe-indicator">Swipe to see more skills</div>
+              )}
             </div>
           ) : (
             // Original desktop grid view
@@ -1850,18 +1872,19 @@ function App() {
         .skills-carousel-container {
           position: relative;
           width: 100%;
-          max-width: 500px;
+          max-width: 650px;
           margin: 0 auto;
           overflow: hidden;
           padding: 20px 0;
+          padding-bottom: 30px;
         }
         
         .skills-carousel {
-          display: flex;
           width: 100%;
-          height: 500px; /* Adjust based on your content */
           position: relative;
           touch-action: pan-y;
+          /* Height that matches the image example */
+          height: 400px;
         }
         
         .carousel-card {
@@ -1869,43 +1892,85 @@ function App() {
           width: 100%;
           height: 100%;
           transition: transform 0.3s ease, opacity 0.3s ease;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-          will-change: transform, opacity;
-          user-select: none;
+          background-color: rgba(0, 0, 0, 0.2);  /* Match the dark semi-transparent background */
+          border-radius: 12px;
+          padding: 25px 30px;  /* Increased horizontal padding */
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
         }
         
-        .carousel-card.active {
-          transform: scale(1.02);
-          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        .carousel-card .category-title {
+          text-align: center;
+          margin-bottom: 30px;
+          font-size: 1.8rem;
+          font-weight: bold;
         }
         
+        .carousel-card .skill-list {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;  /* Larger gap between skill items */
+          flex-grow: 1;
+        }
+        
+        .carousel-card .skill-item {
+          margin-bottom: 0;  /* Remove extra margin */
+        }
+        
+        .carousel-card .skill-info {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 5px;
+        }
+        
+        .carousel-card .skill-progress {
+          height: 8px;  /* Match the height in the image */
+          background-color: rgba(255, 255, 255, 0.1);  /* Lighter background for the progress bar */
+          border-radius: 4px;
+          overflow: hidden;
+        }
+        
+        .carousel-card .skill-progress-bar {
+          height: 100%;
+          background-color: #1f7fea;  /* Match the blue color */
+          border-radius: 4px;
+        }
+        
+        /* Position controls at the bottom center */
         .carousel-controls {
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-top: 20px;
+          position: absolute;
+          bottom: -60px;  /* Position below the card like in the image */
+          left: 0;
+          right: 0;
           gap: 20px;
+          z-index: 30;
         }
         
         .carousel-control {
-          width: 40px;
-          height: 40px;
+          width: 45px;
+          height: 45px;
           border-radius: 50%;
           border: none;
-          background-color: var(--primary-color);
-          color: var(--text-light);
-          font-size: 1.2rem;
+          background-color: #1f7fea;  /* Match the blue color */
+          color: white;
+          font-size: 1.5rem;
           font-weight: bold;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           transition: all 0.2s ease;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         .carousel-control:hover:not(:disabled) {
           transform: scale(1.1);
-          background-color: var(--primary-dark);
+          background-color: #1868c7;
         }
         
         .carousel-control:active:not(:disabled) {
@@ -1913,90 +1978,81 @@ function App() {
         }
         
         .carousel-control:disabled {
-          background-color: var(--bg-gray);
-          color: var(--text-secondary);
+          background-color: #4a4a5a;
           cursor: not-allowed;
           opacity: 0.5;
         }
         
-        .carousel-indicators {
+        /* Add more spacing to the container to accommodate the buttons */
+        #skills {
+          padding-bottom: 60px;
+        }
+        
+        /* Add styles for pagination indicators */
+        .carousel-pagination {
           display: flex;
+          justify-content: center;
           gap: 8px;
+          position: absolute;
+          bottom: -30px;
+          left: 0;
+          right: 0;
+          z-index: 20;
         }
         
-        .carousel-indicator {
-          width: 10px;
-          height: 10px;
+        .pagination-dot {
+          width: 8px;
+          height: 8px;
           border-radius: 50%;
-          background-color: var(--bg-gray);
-          cursor: pointer;
-          transition: all 0.2s ease;
+          background-color: rgba(255, 255, 255, 0.3);
+          transition: all 0.3s ease;
         }
         
-        .carousel-indicator.active {
-          background-color: var(--primary-color);
+        .pagination-dot.active {
+          background-color: #1f7fea;
           transform: scale(1.2);
         }
         
-        /* Dark mode support for carousel */
-        .dark-theme .carousel-control {
-          background-color: var(--primary-color);
-          color: var(--text-light);
+        /* Add peek effect for adjacent cards */
+        .carousel-card:not(.active) {
+          opacity: 0.2 !important; /* Make non-active cards slightly visible */
         }
         
-        .dark-theme .carousel-control:disabled {
-          background-color: var(--bg-gray);
-          color: var(--text-secondary);
-        }
-        
-        .dark-theme .carousel-indicator {
-          background-color: var(--bg-gray);
-        }
-        
-        .dark-theme .carousel-indicator.active {
-          background-color: var(--primary-color);
-        }
-        
-        /* Add gesture hint for mobile users */
+        /* Add swipe hint animation */
         @keyframes swipeHint {
           0% { transform: translateX(0); }
-          25% { transform: translateX(10px); }
-          50% { transform: translateX(0); }
-          75% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
           100% { transform: translateX(0); }
         }
         
-        .skills-carousel-container::after {
-          content: 'Swipe to navigate';
+        .swipe-hint {
+          position: absolute;
+          right: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: rgba(255, 255, 255, 0.7);
+          font-size: 20px;
+          animation: swipeHint 1.5s infinite;
+          z-index: 25;
+          pointer-events: none;
+          opacity: 0;
+          transition: opacity 0.5s ease;
+        }
+        
+        .swipe-hint.visible {
+          opacity: 1;
+        }
+        
+        /* Add swipe indicator text */
+        .swipe-indicator {
           position: absolute;
           bottom: -25px;
           left: 0;
           right: 0;
           text-align: center;
           font-size: 0.8rem;
-          color: var(--text-secondary);
-          opacity: 0.8;
-          animation: swipeHint 2s ease-in-out infinite;
+          color: rgba(255, 255, 255, 0.7);
           pointer-events: none;
-        }
-        
-        /* Adjust carousel height based on content */
-        @media (max-width: 768px) {
-          .skills-carousel {
-            height: 450px;
-          }
-        }
-        
-        @media (max-width: 480px) {
-          .skills-carousel {
-            height: 400px;
-          }
-          
-          .carousel-control {
-            width: 35px;
-            height: 35px;
-            font-size: 1rem;
-          }
         }
       `}</style>
     </div>
