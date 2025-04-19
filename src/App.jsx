@@ -49,6 +49,12 @@ function App() {
   const [isMobileView, setIsMobileView] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // New state for skills carousel
+  const [currentSkillIndex, setCurrentSkillIndex] = useState(0);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
+  const skillsContainerRef = useRef(null);
+
   // Calculate years of experience automatically from August 2021
   const calculateExperience = () => {
     const startDate = new Date(2021, 7, 1); // August 2021 (month is 0-indexed, so 7 = August)
@@ -333,6 +339,45 @@ function App() {
     localStorage.setItem("theme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
 
+  // Function to handle touch start event
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  // Function to handle touch move event
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+
+  // Function to handle touch end event
+  const handleTouchEnd = () => {
+    if (touchStartX - touchEndX > 70) {
+      // Swipe left, go to next card
+      handleNextSkill();
+    } else if (touchEndX - touchStartX > 70) {
+      // Swipe right, go to previous card
+      handlePrevSkill();
+    }
+  };
+
+  // Functions to navigate between skills
+  const handlePrevSkill = () => {
+    if (currentSkillIndex > 0) {
+      setCurrentSkillIndex(currentSkillIndex - 1);
+    }
+  };
+
+  const handleNextSkill = () => {
+    if (currentSkillIndex < skillsCategories.length - 1) {
+      setCurrentSkillIndex(currentSkillIndex + 1);
+    }
+  };
+
+  // Function to navigate to a specific skill index
+  const goToSkillIndex = (index) => {
+    setCurrentSkillIndex(index);
+  };
+
   return (
     <div className={`App ${isDarkMode ? "dark-theme" : "light-theme"}`}>
       {/* Header with navigation */}
@@ -466,29 +511,117 @@ function App() {
       <section id="skills" className="skills-section">
         <div className="container">
           <h2 className="section-title skills-header">Technical Skills</h2>
-          <div className="skills-container">
-            {skillsCategories.map((category, index) => (
-              <div key={index} className="skill-category-card">
-                <h3 className="category-title">{category.name}</h3>
-                <div className="skill-list">
-                  {category.skills.map((skill, skillIndex) => (
-                    <div key={skillIndex} className="skill-item">
-                      <div className="skill-info">
-                        <span className="skill-name">{skill.name}</span>
-                        <span className="skill-percentage">{skill.level}%</span>
-                      </div>
-                      <div className="skill-progress">
-                        <div
-                          className="skill-progress-bar"
-                          style={{ width: `${skill.level}%` }}
-                        ></div>
-                      </div>
+
+          {/* Mobile skills carousel with swipe functionality */}
+          {isMobileView ? (
+            <div className="skills-carousel-container">
+              <div
+                className="skills-carousel"
+                ref={skillsContainerRef}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {skillsCategories.map((category, index) => (
+                  <div
+                    key={index}
+                    className={`skill-category-card carousel-card ${
+                      index === currentSkillIndex ? "active" : ""
+                    }`}
+                    style={{
+                      transform: `translateX(${
+                        (index - currentSkillIndex) * 100
+                      }%)`,
+                      opacity: index === currentSkillIndex ? 1 : 0.8,
+                      zIndex: index === currentSkillIndex ? 2 : 1,
+                    }}
+                  >
+                    <h3 className="category-title">{category.name}</h3>
+                    <div className="skill-list">
+                      {category.skills.map((skill, skillIndex) => (
+                        <div key={skillIndex} className="skill-item">
+                          <div className="skill-info">
+                            <span className="skill-name">{skill.name}</span>
+                            <span className="skill-percentage">
+                              {skill.level}%
+                            </span>
+                          </div>
+                          <div className="skill-progress">
+                            <div
+                              className="skill-progress-bar"
+                              style={{ width: `${skill.level}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Navigation controls */}
+              <div className="carousel-controls">
+                <button
+                  className="carousel-control prev"
+                  onClick={handlePrevSkill}
+                  disabled={currentSkillIndex === 0}
+                  aria-label="Previous skill category"
+                >
+                  &lt;
+                </button>
+
+                {/* Carousel indicators */}
+                <div className="carousel-indicators">
+                  {skillsCategories.map((_, index) => (
+                    <span
+                      key={index}
+                      className={`carousel-indicator ${
+                        index === currentSkillIndex ? "active" : ""
+                      }`}
+                      onClick={() => goToSkillIndex(index)}
+                      aria-label={`Go to skill category ${index + 1}`}
+                    ></span>
                   ))}
                 </div>
+
+                <button
+                  className="carousel-control next"
+                  onClick={handleNextSkill}
+                  disabled={currentSkillIndex === skillsCategories.length - 1}
+                  aria-label="Next skill category"
+                >
+                  &gt;
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            // Original desktop grid view
+            <div className="skills-container">
+              {skillsCategories.map((category, index) => (
+                <div key={index} className="skill-category-card">
+                  <h3 className="category-title">{category.name}</h3>
+                  <div className="skill-list">
+                    {category.skills.map((skill, skillIndex) => (
+                      <div key={skillIndex} className="skill-item">
+                        <div className="skill-info">
+                          <span className="skill-name">{skill.name}</span>
+                          <span className="skill-percentage">
+                            {skill.level}%
+                          </span>
+                        </div>
+                        <div className="skill-progress">
+                          <div
+                            className="skill-progress-bar"
+                            style={{ width: `${skill.level}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -1711,6 +1844,159 @@ function App() {
         /* Remove previous transition overlay */
         .theme-transition-overlay {
           display: none;
+        }
+        
+        /* Skills Carousel Styles */
+        .skills-carousel-container {
+          position: relative;
+          width: 100%;
+          max-width: 500px;
+          margin: 0 auto;
+          overflow: hidden;
+          padding: 20px 0;
+        }
+        
+        .skills-carousel {
+          display: flex;
+          width: 100%;
+          height: 500px; /* Adjust based on your content */
+          position: relative;
+          touch-action: pan-y;
+        }
+        
+        .carousel-card {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          transition: transform 0.3s ease, opacity 0.3s ease;
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+          will-change: transform, opacity;
+          user-select: none;
+        }
+        
+        .carousel-card.active {
+          transform: scale(1.02);
+          box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .carousel-controls {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin-top: 20px;
+          gap: 20px;
+        }
+        
+        .carousel-control {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: none;
+          background-color: var(--primary-color);
+          color: var(--text-light);
+          font-size: 1.2rem;
+          font-weight: bold;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s ease;
+        }
+        
+        .carousel-control:hover:not(:disabled) {
+          transform: scale(1.1);
+          background-color: var(--primary-dark);
+        }
+        
+        .carousel-control:active:not(:disabled) {
+          transform: scale(0.95);
+        }
+        
+        .carousel-control:disabled {
+          background-color: var(--bg-gray);
+          color: var(--text-secondary);
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
+        
+        .carousel-indicators {
+          display: flex;
+          gap: 8px;
+        }
+        
+        .carousel-indicator {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: var(--bg-gray);
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        
+        .carousel-indicator.active {
+          background-color: var(--primary-color);
+          transform: scale(1.2);
+        }
+        
+        /* Dark mode support for carousel */
+        .dark-theme .carousel-control {
+          background-color: var(--primary-color);
+          color: var(--text-light);
+        }
+        
+        .dark-theme .carousel-control:disabled {
+          background-color: var(--bg-gray);
+          color: var(--text-secondary);
+        }
+        
+        .dark-theme .carousel-indicator {
+          background-color: var(--bg-gray);
+        }
+        
+        .dark-theme .carousel-indicator.active {
+          background-color: var(--primary-color);
+        }
+        
+        /* Add gesture hint for mobile users */
+        @keyframes swipeHint {
+          0% { transform: translateX(0); }
+          25% { transform: translateX(10px); }
+          50% { transform: translateX(0); }
+          75% { transform: translateX(-10px); }
+          100% { transform: translateX(0); }
+        }
+        
+        .skills-carousel-container::after {
+          content: 'Swipe to navigate';
+          position: absolute;
+          bottom: -25px;
+          left: 0;
+          right: 0;
+          text-align: center;
+          font-size: 0.8rem;
+          color: var(--text-secondary);
+          opacity: 0.8;
+          animation: swipeHint 2s ease-in-out infinite;
+          pointer-events: none;
+        }
+        
+        /* Adjust carousel height based on content */
+        @media (max-width: 768px) {
+          .skills-carousel {
+            height: 450px;
+          }
+        }
+        
+        @media (max-width: 480px) {
+          .skills-carousel {
+            height: 400px;
+          }
+          
+          .carousel-control {
+            width: 35px;
+            height: 35px;
+            font-size: 1rem;
+          }
         }
       `}</style>
     </div>
